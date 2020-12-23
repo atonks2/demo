@@ -2,11 +2,11 @@
 
 [ $# -eq 0 ] && { echo "Usage: $0 version_tag"; exit 1; }
 
-# releases should be created from master branch
-if [ "$(git branch --show-current)" != "master" ]
+# releases should be created from main branch
+if [ "$(git branch --show-current)" != "main" ]
 then
-    echo "switching to branch 'master'"
-    git checkout master > /dev/null 2>&1
+    echo "switching to branch 'main'"
+    git checkout main > /dev/null 2>&1
 fi
 
 status=$(git status --porcelain)
@@ -44,5 +44,5 @@ fi
 git add CHANGELOG.md version.go
 git commit -m "release $1"
 git tag "$1"
-git push origin master
+git push origin main
 git push origin "$1"
