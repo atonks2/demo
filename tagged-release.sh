@@ -1,10 +1,12 @@
 #!/bin/sh
 
+[ $# -eq 0 ] && { echo "Usage: $0 version_tag"; exit 1; }
+
 # releases should be created from master branch
-if [ "$(git branch --show-current)" != "main" ]
+if [ "$(git branch --show-current)" != "master" ]
 then
-    echo "switching to branch 'main'"
-    git checkout main > /dev/null 2>&1
+    echo "switching to branch 'master'"
+    git checkout master > /dev/null 2>&1
 fi
 
 status=$(git status --porcelain)
@@ -13,9 +15,12 @@ status=$(git status --porcelain)
 if [ "$(echo "$status" | wc -l)" -ne 2 ]
 then
   echo "Only version.go and CHANGELOG.md should be updated!"
-  printf "Pending changes:\n%s\n" "$status"
+  if [ -n "$status" ]
+  then
+    printf "Pending changes:\n%s\n" "$status"
+  fi
   exit
-elif  ! echo "$status" | grep -q "CHANGELOG.md" &&  ! echo "$status" | grep -q "version.go"
+elif ! echo "$status" | grep -q "CHANGELOG.md" && ! echo "$status" | grep -q "version.go"
 then
     echo "version.go and changelog.md must be updated to proceed"
     exit
@@ -41,4 +46,3 @@ git commit -m "release $1"
 git tag "$1"
 git push origin master
 git push origin "$1"
-
