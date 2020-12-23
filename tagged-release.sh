@@ -8,7 +8,7 @@ then
     echo "switching to branch 'main'"
     git checkout main > /dev/null 2>&1
 fi
-
+echo "after get current branch"
 status=$(git status --porcelain)
 
 # only 2 files should be changed
@@ -25,12 +25,13 @@ then
     echo "version.go and changelog.md must be updated to proceed"
     exit
 fi
-
+echo "checked files changed"
 # make sure this is a new tag
 if ! git rev-parse $1 | grep -q 'unknown revision or path'; then
    echo "$1 already exists!"
    exit
 fi
+echo "checked existing tag"
 
 firstLine=$(head -n 1 CHANGELOG.md)
 expectedHeader=$(printf "## $1 (Released %s)" "$(date +"%Y-%m-%d")")
@@ -39,7 +40,7 @@ then
   echo "Did you update the CHANGELOG's header? Expected \"$expectedHeader\", found \"$firstLine\""
   exit
 fi
-
+echo "checked changelog header"
 # see https://github.com/moovfinancial/engineering-guide#open-source-releases
 git add CHANGELOG.md version.go
 git commit -m "release $1"
